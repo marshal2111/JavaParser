@@ -20,30 +20,31 @@ public class Block {
 		return this.element;
 	}
 
-	public void process() {
+	public String process() {
 		Elements textBlocks = this.element.children();
+		StringBuilder str = new StringBuilder("");
 		for (Element iter : textBlocks) {
 			if (iter.tag().toString().equals("h3")) {
-				System.out.println(iter.text());
+				str.append(iter.text() + "\n");
 			}
 			if (iter.tag().toString().equals("ul")) {
 				Elements markers = iter.getElementsByTag("li");
 				for (Element marker : markers) {
-					System.out.println(marker.text());
+					str.append(marker.text() + "\n");;
 				}
 			}
 			if (iter.tag().toString().equals("div")) {
 				Block block = new Block(iter);
-				block.process();
-				System.out.println();
+				str.append(block.process() + "\n");
 			}
 			if (iter.tag().toString().equals("span")) {
 				if ((iter.children().size() != 0) && (iter.child(0).tag().toString().equals("br"))){
-					System.out.print("");
+					str.append("");
 				}
-				System.out.print(iter.text());
+				str.append(iter.text());
 			}
 		}
+		return str.toString();
 	}
 }
 

@@ -15,6 +15,8 @@ public class Main
        	Element textBlock = postEntry.child(1);
 
         Block block = new Block(textBlock);
-        block.process();
+        StringBuilder str = new StringBuilder(block.process());
+
+        System.out.println(str);
     }
 }
