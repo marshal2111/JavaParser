@@ -30,7 +30,7 @@ public class Block {
 			if (iter.tag().toString().equals("ul")) {
 				Elements markers = iter.getElementsByTag("li");
 				for (Element marker : markers) {
-					str.append(marker.text() + "\n");;
+					str.append("- " + marker.text() + "\n");;
 				}
 			}
 			if (iter.tag().toString().equals("div")) {
@@ -39,9 +39,12 @@ public class Block {
 			}
 			if (iter.tag().toString().equals("span")) {
 				if ((iter.children().size() != 0) && (iter.child(0).tag().toString().equals("br"))){
-					str.append("");
+					str.append("\n");
 				}
 				str.append(iter.text());
+			}
+			if (iter.tag().toString().equals("br")) {
+				str.append("\n");
 			}
 		}
 		return str.toString();
