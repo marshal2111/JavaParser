@@ -12,11 +12,9 @@ public class Main
         Document doc = Jsoup.connect("https://jsehelper.blogspot.com/2016/01/blog-post_9.html").get();  
        	Element postEntry = doc.getElementsByClass("post-entry").first();
 
-       	Elements textBlocks = postEntry.child(1).children();
-        
-       	for (Element element : textBlocks) {
-            Block block = new Block(element);
-            block.process();
-        }
+       	Element textBlock = postEntry.child(1);
+
+        Block block = new Block(textBlock);
+        block.process();
     }
 }
