@@ -4,7 +4,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.select.Elements;
 import org.jsoup.nodes.Element;
-import java.io.IOException; 
+import java.io.*;
 
 public class Main
 {
@@ -17,6 +17,13 @@ public class Main
         Block block = new Block(textBlock);
         StringBuilder str = new StringBuilder(block.process());
 
-        System.out.println(str);
+        try(PrintWriter writer = new PrintWriter("test.txt", "UTF-8")) {
+            writer.println(str);
+        } 
+        catch(IOException ex){   
+            System.out.println(ex.getMessage());
+        }  
+
+        
     }
 }
