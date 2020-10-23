@@ -6,6 +6,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import java.io.IOException;
 import java.io.File;
+import java.io.FileWriter;
 
 public class Parser {
 	private String url;
@@ -49,7 +50,7 @@ public class Parser {
 		Element postEntry = doc.getElementsByClass("post-entry").first();
         Element textBlock = postEntry.child(1);
         Block block = new Block(textBlock);
-        StringBuilder str = new StringBuilder(block.process());
+        String str = block.process();
         return str.toString();
 	}
 
@@ -57,12 +58,19 @@ public class Parser {
 		if (name.contains("/")) 
 			name = name.replace("/", " ");
 		try  {
-			File file = new File(this.dir, name + ".txt");
+			File file = new File(this.dir, name + "txt");
 			if (!file.exists())
 				file.createNewFile();
+			try (FileWriter fileWriter = new FileWriter(this.dir + "/" + name + "txt")) {
+				fileWriter.write(text);
+				fileWriter.close();
+			} 
+			catch (IOException exW) {
+				System.out.println(exW.getMessage() + " WHILE WRITING TO " + name + ".txt"); 
+			}
 		}
-		catch (IOException ex) {
-			System.out.println(ex.getMessage() + " " + name + ".txt");
+		catch (IOException exC) {
+			System.out.println(exC.getMessage() + " WHILE CREATING FILE " + name + ".txt");
 		}
 	}	
 }
