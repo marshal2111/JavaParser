@@ -50,26 +50,26 @@ public class Parser {
 		Element postEntry = doc.getElementsByClass("post-entry").first();
         Element textBlock = postEntry.child(1);
         StringBuilder str = new StringBuilder(processBlock(textBlock));
-        Elements linkBlocks = textBlock.getElementsByTag("a");
-        String linkNext;
-        if (linkBlocks.size() != 0) {
-        	for (Element iter : linkBlocks) {	
-        		linkNext = iter.attr("href");
-        		if (linkNext.contains(".html")) {
-        			System.out.println(linkNext);
-        			str.append(parsePage(linkNext));
-        		}
-        	}
-        }
         return str.toString();
 	}
 
-	public String processBlock(Element textBlock) {
+	public String processBlock(Element textBlock) throws IOException{
 		Elements textBlocks = textBlock.children();
 		StringBuilder str = new StringBuilder("");
 		for (Element iter : textBlocks) {
 			if (iter.tag().toString().equals("h3")) {
 				str.append(iter.text() + "\n");
+				Elements linkBlocks = iter.getElementsByTag("a");
+        		String linkNext;
+        		if (linkBlocks.size() != 0) {
+        			for (Element linkIter : linkBlocks) {	
+        				linkNext = linkIter.attr("href");
+        				if (linkNext.contains(".html")) {
+        					System.out.println(linkNext);
+        					str.append(parsePage(linkNext));
+        				}
+        			}	
+        		}
 			}
 			if (iter.tag().toString().equals("ul")) {
 				Elements markers = iter.getElementsByTag("li");
@@ -78,8 +78,7 @@ public class Parser {
 				}
 			}
 			if (iter.tag().toString().equals("div")) {
-				Block block = new Block(iter);
-				str.append(block.process() + "\n");
+				str.append(processBlock(iter) + "\n");
 			}
 			if (iter.tag().toString().equals("span")) {
 				if ((iter.children().size() != 0) && (iter.child(0).tag().toString().equals("br"))){
