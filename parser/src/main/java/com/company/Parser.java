@@ -49,8 +49,7 @@ public class Parser {
 		Document doc = Jsoup.connect(link).get();
 		Element postEntry = doc.getElementsByClass("post-entry").first();
         Element textBlock = postEntry.child(1);
-        Block block = new Block(textBlock);
-        StringBuilder str = new StringBuilder(block.process());
+        StringBuilder str = new StringBuilder(processBlock(textBlock));
         Elements linkBlocks = textBlock.getElementsByTag("a");
         String linkNext;
         if (linkBlocks.size() != 0) {
@@ -63,6 +62,36 @@ public class Parser {
         	}
         }
         return str.toString();
+	}
+
+	public String processBlock(Element textBlock) {
+		Elements textBlocks = textBlock.children();
+		StringBuilder str = new StringBuilder("");
+		for (Element iter : textBlocks) {
+			if (iter.tag().toString().equals("h3")) {
+				str.append(iter.text() + "\n");
+			}
+			if (iter.tag().toString().equals("ul")) {
+				Elements markers = iter.getElementsByTag("li");
+				for (Element marker : markers) {
+					str.append("- " + marker.text() + "\n");;
+				}
+			}
+			if (iter.tag().toString().equals("div")) {
+				Block block = new Block(iter);
+				str.append(block.process() + "\n");
+			}
+			if (iter.tag().toString().equals("span")) {
+				if ((iter.children().size() != 0) && (iter.child(0).tag().toString().equals("br"))){
+					str.append("\n");
+				}
+				str.append(iter.text());
+			}
+			if (iter.tag().toString().equals("br")) {
+				str.append("\n");
+			}
+		}
+		return str.toString();
 	}
 
 	private void writeToFile(String text, String name) {
