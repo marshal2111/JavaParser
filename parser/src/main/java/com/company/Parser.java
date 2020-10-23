@@ -50,7 +50,18 @@ public class Parser {
 		Element postEntry = doc.getElementsByClass("post-entry").first();
         Element textBlock = postEntry.child(1);
         Block block = new Block(textBlock);
-        String str = block.process();
+        StringBuilder str = new StringBuilder(block.process());
+        Elements linkBlocks = textBlock.getElementsByTag("a");
+        String linkNext;
+        if (linkBlocks.size() != 0) {
+        	for (Element iter : linkBlocks) {	
+        		linkNext = iter.attr("href");
+        		if (linkNext.contains(".html")) {
+        			System.out.println(linkNext);
+        			str.append(parsePage(linkNext));
+        		}
+        	}
+        }
         return str.toString();
 	}
 
