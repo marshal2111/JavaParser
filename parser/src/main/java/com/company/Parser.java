@@ -4,18 +4,18 @@ import org.jsoup.select.Elements;
 import org.jsoup.nodes.Element;
 import org.jsoup.Jsoup;  
 import org.jsoup.nodes.Document;
-import java.util.ArrayList;
 import java.io.IOException;
+import java.io.File;
 
 public class Parser {
 	private String url;
 	private String dir;
-	ArrayList<String> parsedLinks;
+	PairList parsedLinks;
 
 	public Parser() {
 		this.url = "";
 		this.dir = "";
-		this.parsedLinks = new ArrayList<>();
+		this.parsedLinks = new PairList();
 	}
 
 	public void setAdress(String url) {
@@ -33,17 +33,36 @@ public class Parser {
 		String link;
        	for (Element iter : linkBlocks) {
        		link = iter.attr("href");
-       		if (!parsedLinks.contains(link)) {
-       			parsedLinks.add(link);
+       		if ((!parsedLinks.containsLink(link)) && (!link.equals(""))) {
+       			parsedLinks.add(new Pair(link, iter.text()));
        		}
        	}
-       	String str;
-       	for (int i = 0; i < parsedLinks.length() - 1; i++) {
-       		str = parsePage(parsedLinks[i]);
-       		//System.out.println(str);
+       	String text;
+       	for (int i = 0; i < parsedLinks.size() - 1; i++) {
+       		text = parsePage(parsedLinks.get(i).getLink());
+       		writeToFile(text, parsedLinks.get(i).getHeader());
        	}
 	}
 
-	private void parsePage(Document doc) {
+	private String parsePage(String link) throws IOException{
+		Document doc = Jsoup.connect(link).get();
+		Element postEntry = doc.getElementsByClass("post-entry").first();
+        Element textBlock = postEntry.child(1);
+        Block block = new Block(textBlock);
+        StringBuilder str = new StringBuilder(block.process());
+        return str.toString();
 	}
+
+	private void writeToFile(String text, String name) {
+		if (name.contains("/")) 
+			name = name.replace("/", " ");
+		try  {
+			File file = new File(this.dir, name + ".txt");
+			if (!file.exists())
+				file.createNewFile();
+		}
+		catch (IOException ex) {
+			System.out.println(ex.getMessage() + " " + name + ".txt");
+		}
+	}	
 }
